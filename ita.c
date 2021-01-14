@@ -2,28 +2,28 @@
 #include "supportLib.c"
 #include<stdio.h>
 #include<stdlib.h>
-int point=0;   //for accessing all the time and intensity values
+int point=0;
 struct plot
 {
     double x,y;
 };
 int group(struct plot peak[100],int len,struct plot axis[len])
 {
-    int k=0;    //k for index of peak
+    int k=0;   
     double part1,part2=0,area;
-    double h=axis[1].x-axis[0].x;       //h=t2-t1
+    double h=axis[1].x-axis[0].x;       
     for(int i=0;i<len-1;i++)
     {
         if(point!=len)
         {
-            if(axis[point].y>=0.1)   //checks intensity >=0.1
+            if(axis[point].y>=0.1)   
             {
                 peak[k].x=axis[point].x; 
-                peak[k].y=axis[point].y;  //copying values to peak(array of structure)
+                peak[k].y=axis[point].y;  
                 point++;
                 k++;
             }
-            else if(axis[point].y<0.1)  //checks intensity <0.1
+            else if(axis[point].y<0.1)  
             {
                 if(k<2)
                 {
@@ -38,7 +38,7 @@ int group(struct plot peak[100],int len,struct plot axis[len])
                         //printf("%lf\n",peak[j].y);
                         part2=part2+peak[j].y;
                     }
-                    area=((h*0.5)*(part1+2*part2));   //area
+                    area=((h*0.5)*(part1+2*part2));  
                     printf("n : %d\tArea : %lf\n",k,area);
                     break;
                 }
@@ -47,7 +47,7 @@ int group(struct plot peak[100],int len,struct plot axis[len])
     }
     for(int l=0;l<=k-1;l++)
     {
-        printf("%lf\t%lf\n",peak[l].x,peak[l].y);  //points of peak
+        printf("%lf\t%lf\n",peak[l].x,peak[l].y);  
     }
 }
 int main()
@@ -64,8 +64,8 @@ int main()
     printf("%d\n",len);
 
     double *a=(double *)malloc(len*sizeof(double));
-    double *b=(double *)malloc(len*sizeof(double));;
-    struct plot *axis=(struct plot*)malloc(len*sizeof(struct plot));//declaring array of structure
+    double *b=(double *)malloc(len*sizeof(double));
+    struct plot *axis=(struct plot*)malloc(len*sizeof(struct plot));
 
     //reading x
     fseek(fp,54,SEEK_SET);
@@ -73,7 +73,7 @@ int main()
     {
         fscanf(fp,"%lf",&a[i]);
         //printf("%lf\n",a[i]);
-        axis[i].x=a[i];        //copying to a array of structure
+        axis[i].x=a[i];        
         fseek(fp,18,SEEK_CUR);
     }
     //reading y
@@ -82,18 +82,20 @@ int main()
     {
         fscanf(fp,"%lf",&b[j]);
         //printf("%lf\n",b[j]);
-        axis[j].y=b[j];           //copying to a array of structure
+        axis[j].y=b[j];           
         fseek(fp,18,SEEK_CUR); 
     }
     fclose(fp);
 
-    /*RGBABitmapImageReference *imageRef = CreateRGBABitmapImageReference();
-    DrawScatterPlot(imageRef, 1250, 800, a, 10000, b, 10000);
+    RGBABitmapImageReference *imageRef = CreateRGBABitmapImageReference();
+    DrawScatterPlot(imageRef, 1250, 800, a, len, b, len);
     size_t length;
     double *pngData = ConvertToPNG(&length, imageRef->image);
-    WriteToFile(pngData, length, "plot.png");*/
+    WriteToFile(pngData, length, "plot.png");
+    free(a);
+    free(b);
 
-    struct plot *peak=(struct plot*)malloc(len*sizeof(struct plot));//memory allocation using malloc
+    struct plot *peak=(struct plot*)malloc(len*sizeof(struct plot));
     while(point<len)
     {
         group(peak,len,axis);
